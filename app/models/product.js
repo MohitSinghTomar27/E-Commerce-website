@@ -1,32 +1,60 @@
 const mongoose = require('mongoose')
-
 const Schema = mongoose.Schema
-const productSchema = new Schema({ 
-    productName: {
-        type: String,
-        required: true
+const productSchema = new Schema({
+    category : {
+        type : Schema.Types.ObjectId,
+        ref: Category
     },
-    size: {
-        type: String,
-        enum : ['s','l','xl','xxl'],
-        required: true
+    name : {
+        type : String,
+        required : true,
+        minlength: 2,
+        maxlength : 64
     },
     price : {
-        type: Number,
-        required: true
+        type : Number,
+        required: true,
+        min : 1
     },
-    gender: {
-        type:String,
-        enum: ['male', 'female'],
-        required: true
+    description : {
+        type : String,
+        required : true,
+        minlength : 5,
+        maxlength : 1000
     },
-    category:{
-        type:Schema.Types.ObjectId,
-       // required:true,
-        ref:'Category'
+    stock : {
+        type : Number,
+        required : true,
+        min : 0
+    },
+    codEligible: {
+        type : Boolean,
+        required : true,
+        default : true
+    },
+    maxUnitPurhase : {
+        type : Number,
+        required: true,
+        min:1
+    },
+    lowStockAlert : {
+        type : Number,
+        required : true,
+        min : 0
     }
+
 })
 
-const Product = mongoose.model('Product', productSchema)
+productSchema.statics.findByCategory = function(id){
+    let Product = this;
+    return Product.find({category : id})
+}
+productSchema.statics.findByCategoryAndRange = function(id){
+    let Product = this;
+    return Product.find({ category : id})
 
-module.exports = Product
+}
+
+module.exports = {
+    Product
+}
